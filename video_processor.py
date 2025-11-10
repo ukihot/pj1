@@ -233,7 +233,7 @@ class FrameAnalyzer:
 
         try:
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            h, s, v = cv2.split(hsv)
+            _, s, v = cv2.split(hsv)  # h is unused
 
             s_std = np.std(s)
             v_mean = np.mean(v)
@@ -304,7 +304,7 @@ class AsyncFrameReader(Thread):
                         self.queue.put((False, None))
                         break
                     self.queue.put((ret, frame))
-        except Exception as e:
+        except (cv2.error, IOError, RuntimeError) as e:
             logger.error("AsyncFrameReader error: %s", e)
             self.stopped = True
             self.queue.put((False, None))
@@ -322,7 +322,7 @@ class AsyncFrameReader(Thread):
         while not self.queue.empty():
             try:
                 self.queue.get_nowait()
-            except:
+            except Exception:  # pylint: disable=broad-exception-caught
                 break
 
     def more(self) -> bool:
@@ -447,7 +447,7 @@ class VideoProcessor:
             while True:
                 try:
                     ret, frame = frame_reader.read() if frame_reader else cap.read()
-                except Exception as e:
+                except (cv2.error, IOError, RuntimeError) as e:
                     logger.warning("Frame read error at frame %d: %s", frame_idx, e)
                     break
 
