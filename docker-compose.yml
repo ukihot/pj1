@@ -1,0 +1,13 @@
+services:
+  hippolytica:
+    image: hippolytica:latest
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ./videos:/app/videos
+      - ./output:/app/output
+    command: >
+      ${VIDEO_URL}
+      --skip-frames ${SKIP_FRAMES:-3}
+      --batch-size ${BATCH_SIZE:-6}
