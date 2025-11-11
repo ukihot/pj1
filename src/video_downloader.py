@@ -9,7 +9,6 @@ import subprocess
 
 logger = logging.getLogger(__name__)
 
-
 class VideoDownloader:
     """YouTube動画のダウンロード管理"""
 

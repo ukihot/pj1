@@ -1,13 +1,15 @@
 services:
   hippolytica:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: hippolytica:latest
-    runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - PYTHONPATH=/app/src
     volumes:
+      - ./src:/app/src
       - ./videos:/app/videos
       - ./output:/app/output
     command: >
       ${VIDEO_URL}
-      --skip-frames ${SKIP_FRAMES:-3}
-      --batch-size ${BATCH_SIZE:-6}
+      ${LIMIT_SECONDS:+--limit-seconds ${LIMIT_SECONDS}}
